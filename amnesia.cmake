@@ -7,17 +7,22 @@ IF(NOT DEFINED ENABLE_STRICT_TRY_COMPILE)
   set(ENABLE_STRICT_TRY_COMPILE NO)
 ENDIF()
 include("${AMNESIA_TOOLCHAIN_DIR}/vendor/ios-cmake/ios.toolchain.cmake")
+# By default, ios.toolchain.cmake wrapps executables in .app bundles
+set(CMAKE_MACOSX_BUNDLE NO)
 
 find_package(Perl REQUIRED)
 
 macro(am_init AUTHOR_NAME)
+  IF(CMAKE_GENERATOR STREQUAL Xcode)
+    set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED "NO")
+    set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "")
+    set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED "NO")
+  ENDIF()
   # Patch Debian Packaging
   set(CPACK_PACKAGE_DIRECTORY "${CMAKE_BINARY_DIR}")
   set(CPACK_GENERATOR "DEB")
   set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${AUTHOR_NAME}")
   set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "iphoneos-arm")
-  # By default, ios.toolchain.cmake wrapps executables in .app bundles
-  set(CMAKE_MACOSX_BUNDLE NO)
   # Sysroot related patches
   include("${AMNESIA_TOOLCHAIN_DIR}/sysroot/sysroot.cmake")
   include(CPack)
