@@ -3,14 +3,33 @@ message(STATUS "[Amnesia]Build System Root : ${AMNESIA_TOOLCHAIN_DIR}")
 IF(NOT DEFINED ENABLE_BITCODE)
   set(ENABLE_BITCODE NO)
 ENDIF()
+IF(NOT DEFINED PLATFORM)
+  set(PLATFORM "OS64")
+ENDIF()
 IF(NOT DEFINED ENABLE_STRICT_TRY_COMPILE)
   set(ENABLE_STRICT_TRY_COMPILE NO)
 ENDIF()
 include("${AMNESIA_TOOLCHAIN_DIR}/vendor/ios-cmake/ios.toolchain.cmake")
 # By default, ios.toolchain.cmake wrapps executables in .app bundles
+# We disable global bundling here, and re-enable for individual targets later if needed
 set(CMAKE_MACOSX_BUNDLE NO)
 
-find_package(Perl REQUIRED)
+IF(COMMAND find_host_package)
+  find_host_package(Perl REQUIRED)
+  message(STATUS "[Amenisia]Perl Interpreter: ${PERL_EXECUTABLE}")
+  # We use Python3 for a bundle of stuff when CMake is not enough.
+  #   - Property-list Generation
+  #   - Cross-platform wrapper around logos.pl
+  find_host_package(Python3 COMPONENTS Interpreter REQUIRED)
+  message(STATUS "[Amenisia]Python3 Interpreter: ${Python3_EXECUTABLE}")
+  execute_process(
+      COMMAND "${Python3_EXECUTABLE}" "-c" "import plistlib"
+      RESULT_VARIABLE EXIT_CODE
+      OUTPUT_QUIET
+      COMMAND_ERROR_IS_FATAL ANY
+  )
+ENDIF()
+
 
 macro(am_init AUTHOR_NAME)
   IF(CMAKE_GENERATOR STREQUAL Xcode)
