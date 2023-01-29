@@ -16,12 +16,12 @@ set(CMAKE_MACOSX_BUNDLE NO)
 
 IF(COMMAND find_host_package)
   find_host_package(Perl REQUIRED)
-  message(STATUS "[Amenisia]Perl Interpreter: ${PERL_EXECUTABLE}")
+  message(STATUS "[Amneisia]Perl Interpreter: ${PERL_EXECUTABLE}")
   # We use Python3 for a bundle of stuff when CMake is not enough.
   #   - Property-list Generation
   #   - Cross-platform wrapper around logos.pl
   find_host_package(Python3 COMPONENTS Interpreter REQUIRED)
-  message(STATUS "[Amenisia]Python3 Interpreter: ${Python3_EXECUTABLE}")
+  message(STATUS "[Amneisia]Python3 Interpreter: ${Python3_EXECUTABLE}")
   execute_process(
       COMMAND "${Python3_EXECUTABLE}" "-c" "import plistlib"
       RESULT_VARIABLE EXIT_CODE
